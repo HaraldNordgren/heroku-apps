@@ -13,10 +13,12 @@ function * run (context, heroku) {
     const trunc = (s, l) => truncate(s, {length: width() - (60 + l), omission: '…'})
     let status = statusHelper.description(r, runningRelease, runningSlug)
     let sc = ''
+    let statusLength = 0
     if (status) {
       sc = cli.color[statusHelper.color(r.status)](status)
+      statusLength = status.length
     }
-    return trunc(d, sc.length) + ' ' + sc
+    return trunc(d, statusLength + 3) + ' ' + sc
   }
 
   let url = `/apps/${context.app}/releases`
