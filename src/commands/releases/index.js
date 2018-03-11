@@ -9,16 +9,17 @@ function * run (context, heroku) {
   const truncate = require('lodash.truncate')
 
   let descriptionWithStatus = function (d, r) {
-    const width = () => process.stdout.columns > 80 ? process.stdout.columns : 80
-    const trunc = (s, l) => truncate(s, {length: width() - (60 + l), omission: '…'})
+    //const width = () => process.stdout.columns > 80 ? process.stdout.columns : 80
+    //const trunc = (s, l) => truncate(s, {length: width() - (60 + l), omission: '…'})
     let status = statusHelper.description(r, runningRelease, runningSlug)
     let sc = ''
-    let statusLength = 0
+    //let statusLength = 0
     if (status) {
       sc = cli.color[statusHelper.color(r.status)](status)
-      statusLength = status.length
+      //statusLength = status.length
     }
-    return trunc(d, statusLength + 3) + ' ' + sc
+    //return trunc(d, statusLength + 3) + ' ' + sc
+    return d + ' ' + sc
   }
 
   let url = `/apps/${context.app}/releases`
@@ -55,7 +56,8 @@ function * run (context, heroku) {
         {key: 'created_at', format: (t) => time.ago(new Date(t))},
         {key: 'extended.slug_id'},
         {key: 'extended.slug_uuid'}
-      ]
+      ],
+      optimizeKey: 'description'
     })
   } else if (releases.length === 0) {
     cli.log(`${context.app} has no releases.`)
@@ -68,7 +70,8 @@ function * run (context, heroku) {
         {key: 'description', format: descriptionWithStatus},
         {key: 'user', format: (u) => cli.color.magenta(u.email)},
         {key: 'created_at', format: (t) => time.ago(new Date(t))}
-      ]
+      ],
+      optimizeKey: 'description'
     })
   }
 }
