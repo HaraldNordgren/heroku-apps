@@ -44,44 +44,45 @@ function * run (context, heroku) {
 
   let optimizeWidth = function (releases, columns, optimizeKey) {
     for (let col of columns) {
-      col.width = 0
+      col.optimizationWidth = 0
     }
 
     for (let row of releases) {
       for (let colKey in row) {
-        if (colKey !== optimizeKey) {
-          for (let col of columns) {
-            let parts = col.key.split('.')
-            let matchKey = parts[0]
-            if (matchKey !== colKey) {
-              continue
-            }
+        if (colKey === optimizeKey) {
+          continue
+        }
 
-            let colValue = row
-            for (let part of parts) {
-              colValue = colValue[part]
-            }
-
-            let formattedValue
-            if (col.format) {
-              formattedValue = col.format(colValue, row)
-            } else {
-              formattedValue = colValue.toString()
-            }
-
-            col.width = Math.max(
-              //  result(col, 'label').length, TODO: Use this?
-              col.width,
-              formattedValue.length
-            )
+        for (let col of columns) {
+          let parts = col.key.split('.')
+          let matchKey = parts[0]
+          if (matchKey !== colKey) {
+            continue
           }
+
+          let colValue = row
+          for (let part of parts) {
+            colValue = colValue[part]
+          }
+
+          let formattedValue
+          if (col.format) {
+            formattedValue = col.format(colValue, row)
+          } else {
+            formattedValue = colValue.toString()
+          }
+
+          col.optimizationWidth = Math.max(
+            col.optimizationWidth,
+            formattedValue.length
+          )
         }
       }
     }
 
     for (let col of columns) {
       if (col.key !== optimizeKey) {
-        optimizationWidth += col.width + 2
+        optimizationWidth += col.optimizationWidth + 2
       }
     }
   }
